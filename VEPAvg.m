@@ -1,3 +1,9 @@
+%% Light reintroduction after dark exposure reactivates plasticity in adults via perisynaptic activation of MMP-9
+% This is the supplement for the manuscript for SU and VEP analysis. This uses input from Tucker Davis Tech, Sorting via OpenSorter.
+% For many portions of this to work you will need TuckerDavis OpenEx.
+% VEP script uses subaxis which is avalible here: https://www.mathworks.com/matlabcentral/fileexchange/3696-subaxis-subplot
+% Lab of Elizabeth Quinlan, by Crystal Lantz 
+
 %% Open connection to TDT Server
 
 TT = actxcontrol('TTank.X');
@@ -8,37 +14,20 @@ invoke(TT,'ConnectServer','Local','Me')
  % block number to access
 block_str = 'Block-';
 Block = input('Block?','s');
-% just type the number, bruh
 if isempty(Block)
-    % Default speed of grating in cycles per second:
     Block= '1';
 end;
 Block = strcat(block_str, Block);
-% % 
-% % Block name for saving269
-% %  savename = input('Block Save?','s');
-% % if isempty(Block)
-% %     Default speed of grating in cycles per second:
-% %     Block= 'Block1';
-% % end;
 
 Trials = 200;
-% % number of trials in block
-%  Trials = input('Trials?');
-% if isempty(Block)
-%     % Default speed of grating in cycles per second:
-%     Trials= 100;
-% end;
  
  b=TT.SelectBlock(Block);
  z=TT.CreateEpocIndexing;
  filt =TT.SetFilterWithDescEx('SPAT=1000');
 
-
      
  %% Pull Individual Channel data
- %save as original Channel number
- 
+
  %Channel 1 = Channel 1
  a=TT.ReadEventsV(Trials,'VEPx',1,0,0,0,'ALL');
  VEPdata1=TT.ParseEvV(0,a);
@@ -183,110 +172,22 @@ BlockAvg= {AverageVEP1; AverageVEP2; AverageVEP3; AverageVEP4; AverageVEP5; Aver
     AverageVEP7; AverageVEP8; AverageVEP9; AverageVEP10; AverageVEP11; AverageVEP12; AverageVEP13;...
     AverageVEP14; AverageVEP15; AverageVEP16};
 
-%Create Matrix of all Averages
+% Create Matrix of all Averages
 TotVEP = [AverageVEP1; AverageVEP2; AverageVEP3; AverageVEP4;...
     AverageVEP5; AverageVEP6; AverageVEP7; AverageVEP8;...
     AverageVEP9; AverageVEP10; AverageVEP11; AverageVEP12; AverageVEP13;...
     AverageVEP14; AverageVEP15; AverageVEP16];
 
-%% Create Matrix of Variability for Each Channel
-varVEP=[var(VEPdata1,0,2), var(VEPdata2,0,2), var(VEPdata3,0,2),...
-var(VEPdata4,0,2), var(VEPdata5,0,2), var(VEPdata6,0,2), ...
-var(VEPdata7,0,2), var(VEPdata8,0,2), var(VEPdata9,0,2),...
-var(VEPdata10,0,2), var(VEPdata11,0,2), var(VEPdata12,0,2), var(VEPdata13,0,2),...
-var(VEPdata14,0,2), var(VEPdata15,0,2), var(VEPdata16,0,2)]';
-% 
-% %plot Variability
-% figure(1);
-% plot(TimeAxis, varVEP);
-% 
-% %plot Traces
-% figure(2)
-% plot(TimeAxis, TotVEP);
-
-%% Calculate CSD 
-% Bear eq
-% CSD14=-1*(75*(AverageVEP14-AverageVEP15)-75*(AverageVEP15-AverageVEP16))/(0.5*75*75*(75+75));
-% CSD13=-1*(75*(AverageVEP13-AverageVEP14)-75*(AverageVEP14-AverageVEP15))/(0.5*75*75*(75+75));
-% CSD12=-1*(75*(AverageVEP12-AverageVEP13)-75*(AverageVEP13-AverageVEP14))/(0.5*75*75*(75+75));
-% CSD11=-1*(75*(AverageVEP11-AverageVEP12)-75*(AverageVEP12-AverageVEP13))/(0.5*75*75*(75+75));
-% CSD10=-1*(75*(AverageVEP10-AverageVEP11)-75*(AverageVEP11-AverageVEP12))/(0.5*75*75*(75+75));
-% CSD9=-1*(75*(AverageVEP9-AverageVEP10)-75*(AverageVEP10-AverageVEP11))/(0.5*75*75*(75+75));
-% CSD8=-1*(75*(AverageVEP8-AverageVEP9)-75*(AverageVEP9-AverageVEP10))/(0.5*75*75*(75+75));
-% CSD7=-1*(75*(AverageVEP7-AverageVEP8)-75*(AverageVEP8-AverageVEP9))/(0.5*75*75*(75+75));
-% CSD6=-1*(75*(AverageVEP6-AverageVEP7)-75*(AverageVEP7-AverageVEP8))/(0.5*75*75*(75+75));
-% CSD5=-1*(75*(AverageVEP5-AverageVEP6)-75*(AverageVEP6-AverageVEP7))/(0.5*75*75*(75+75));
-% CSD4=-1*(75*(AverageVEP4-AverageVEP5)-75*(AverageVEP5-AverageVEP6))/(0.5*75*75*(75+75));
-% CSD3=-1*(75*(AverageVEP3-AverageVEP4)-75*(AverageVEP4-AverageVEP5))/(0.5*75*75*(75+75));
-% CSD2=-1*(75*(AverageVEP2-AverageVEP3)-75*(AverageVEP3-AverageVEP4))/(0.5*75*75*(75+75));
-% CSD1=-1*(75*(AverageVEP1-AverageVEP2)-75*(AverageVEP2-AverageVEP3))/(0.5*75*75*(75+75));
-
-% %Mitz eq
-CSD14=-1*((AverageVEP14-(2*(AverageVEP15))+AverageVEP16)/(2500));
-CSD13=-1*((AverageVEP13-(2*(AverageVEP14))+AverageVEP15)/(2500));
-CSD12=-1*((AverageVEP12-(2*(AverageVEP13))+AverageVEP15)/(2500));
-CSD11=-1*((AverageVEP11-(2*(AverageVEP12))+AverageVEP13)/(2500));
-CSD10=-1*((AverageVEP10-(2*(AverageVEP11))+AverageVEP12)/(2500));
-CSD9=-1*((AverageVEP9-(2*(AverageVEP10))+AverageVEP11)/(2500));
-CSD8=-1*((AverageVEP8-(2*(AverageVEP9))+AverageVEP10)/(2500));
-CSD7=-1*((AverageVEP7-(2*(AverageVEP8))+AverageVEP9)/(2500));
-CSD6=-1*((AverageVEP6-(2*(AverageVEP7))+AverageVEP8)/(2500));
-CSD5=-1*((AverageVEP5-(2*(AverageVEP6))+AverageVEP7)/(2500));
-CSD4=-1*((AverageVEP4-(2*(AverageVEP5))+AverageVEP6)/(2500));
-CSD3=-1*((AverageVEP3-(2*(AverageVEP4))+AverageVEP5)/(2500));
-CSD2=-1*((AverageVEP2-(2*(AverageVEP3))+AverageVEP4)/(2500));
-CSD1=-1*((AverageVEP1-(2*(AverageVEP2))+AverageVEP3)/(2500));
-
-% CSD1=((AverageVEP13-(2*(AverageVEP15))+AverageVEP16)/(2500));
-% CSD3=((AverageVEP12-(2*(AverageVEP13))+AverageVEP14)/(2500));
-% CSD4=((AverageVEP11-(2*(AverageVEP12))+AverageVEP13)/(2500));
-% CSD5=((AverageVEP10-(2*(AverageVEP11))+AverageVEP12)/(2500));
-% CSD6=((AverageVEP9-(2*(AverageVEP10))+AverageVEP11)/(2500));
-% CSD7=((AverageVEP8-(2*(AverageVEP9))+AverageVEP10)/(2500));
-% CSD8=((AverageVEP7-(2*(AverageVEP8))+AverageVEP9)/(2500));
-% CSD9=((AverageVEP6-(2*(AverageVEP7))+AverageVEP8)/(2500));
-
-
-
-
-% %%mine
-% CSD1=((AverageVEP14-AverageVEP16-(2*(AverageVEP15)))/(2500));
-% CSD2=((AverageVEP13-AverageVEP15-(2*(AverageVEP14)))/(2500));
-% CSD3=((AverageVEP12-AverageVEP14-(2*(AverageVEP13)))/(2500));
-% CSD4=((AverageVEP11-AverageVEP13-(2*(AverageVEP12)))/(2500));
-% CSD5=((AverageVEP10-AverageVEP12-(2*(AverageVEP11)))/(2500));
-% CSD6=((AverageVEP9-AverageVEP11-(2*(AverageVEP10)))/(2500));
-% CSD7=((AverageVEP8-AverageVEP10-(2*(AverageVEP9)))/(2500));
-% CSD8=((AverageVEP7-AverageVEP9-(2*(AverageVEP8)))/(2500));
-% CSD9=((AverageVEP6-AverageVEP8-(2*(AverageVEP7)))/(2500));
-% CSD10=((AverageVEP5-AverageVEP7-(2*(AverageVEP6)))/(2500));
-% CSD11=((AverageVEP4-AverageVEP6-(2*(AverageVEP5)))/(2500));
-% CSD12=((AverageVEP3-AverageVEP5-(2*(AverageVEP4)))/(2500));
-% CSD13=((AverageVEP2-AverageVEP4-(2*(AverageVEP3)))/(2500));
-% CSD14=((AverageVEP1-AverageVEP3-(2*(AverageVEP2)))/(2500));
-
-%Create Matrix of CSD values
-CSD = ([CSD1;CSD2;CSD3;CSD4;CSD5;CSD6;CSD7;CSD8;CSD9;CSD10;CSD11;CSD12;CSD13;CSD14]); 
-
-% %Create X and Y coords for ploting CSD
-% X = linspace(0,1,3054);
-% Y = linspace(1, 14, 14);
-% 
-% % Plot CSD using contour
-% figure(4)
-% contourf(X,Y,CSD,30, 'LineColor', 'none')
-% set(gca,'Ydir','reverse')
-
+%% Plot VEP averages
 for i=1:16
-figure(2);
-%subplot(2,8,i);
+figure;
 subaxis(2,8,i,'Spacing', 0.025, 'Padding', 0.00, 'Margin', 0.03);
 plot(TimeAxis,BlockAvg{i})
 axis([0 1 -0.0001 0.0001])
 end
 
 %% Time to Peak calculation
-%Take first 1500 samples
+% Take first 1500 samples
 First = TotVEP(1:16, 307:1526);
 
 Last = TotVEP(1:16, 1527:3054);
@@ -304,46 +205,18 @@ Amp2 = (AmpMax2+AmpMin2)*1000000;
 
 Channels=[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16];
 
-%Create Time Axis from point sampled for Max and Min
+% Create Time Axis from point sampled for Max and Min
 ShortTime=TimeAxis(1,307:1526);
 
-%Find Time Axis points for Min
+% Find Time Axis points for Min
 [num idxmin] = min(First,[],2);
 idxmin=idxmin';
 PeakTimeMin=(ShortTime(idxmin)');
 
-%Find Time Axis points for Max
+% Find Time Axis points for Max
 [num2 idxmax] = max(First,[],2);
 idxmax=idxmax';
 PeakTimeMax=(ShortTime(idxmax)');
 
-% 
-% %% Save Important Stuff
-% save(savename,'Block*', 'Peak*', 'Channels', 'TotVEP', 'TimeAxis',...
-%     'ShortTime', 'Amp*')
 
-
-% %%calc frequency
-% for i =1:16
-% 
-% params.fpass=[0 60];
-% params.Fs=3052;
-% params.tapers=[1 3];
-% params.trialave=200;
-% data= Block{i};
-% data =zscore(data);
-% [S,fw0]=mtspectrumc(data,params);
-% 
-% freq(i,:)=fw0;
-% power(i,:)=S;
-% end
-%  
-
-for i=1:16
-    VEPsm(i,:)=smooth(TotVEP(i,:)*1000000,50);
-end
-
-for i=1:12
-   aCSD(i,:)=zscore(-1*((VEPsm(i,:)-(2*(VEPsm(i+2,:)))+VEPsm(i+4,:))/(2500)));
-end
 
