@@ -1,6 +1,7 @@
 AvgUnit1=zeros(16,30);
 AvgUnit2=zeros(16,30);
 
+% Find number of units for sort 1 and 2
 for i=1:16
     Spike1(i,1)=size(A{i,1},1);
     Num1(i,1)=A{i,1}(1,3);
@@ -11,6 +12,7 @@ end
 
 clear i
 
+% Find average waveform shape for each unit
 for i=1:16
     AvgUnit1(i,:)= mean(A{i,1}(:,6:end));
     AvgUnit2(i,:)= mean(B{i,1}(:,6:end));
@@ -154,6 +156,7 @@ for i=1:16
     AvgUnit2(Num1(i,1),:)=t2(i,:);
 end
 
+%Output data with sorts 1 and 2 combined
 AllMax= [Max1(1:16,1) Max2(1:16,1)];
 AllMin= [Min1(1:16,1) Min2(1:16,1)];
 AllSpike= [nSpike1(1:16,1) nSpike2(1:16,1)];
