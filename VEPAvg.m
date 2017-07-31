@@ -3,15 +3,23 @@
 % For many portions of this to work you will need TuckerDavis OpenEx.
 % VEP script uses subaxis which is avalible here: https://www.mathworks.com/matlabcentral/fileexchange/3696-subaxis-subplot
 % Lab of Elizabeth Quinlan, by Crystal Lantz 
+%
+% This script is fairly straightforward:
+%  1- Pull data from TDT specifying directory and Tank
+%  2- Select define the epoc for LFP, and select each channel of data. Average each channel.
+%  3- Organize the data for both visualization and analysis
+%  4- Calculate LFP parameters; time to peak, max/min, amplitude
+%
+
 
 %% Open connection to TDT Server
 
 TT = actxcontrol('TTank.X');
 invoke(TT,'ConnectServer','Local','Me')
- e=TT.OpenTank('C:\Users\clantz\Desktop\crystal\crystal\20170516\20170516','R');
+e=TT.OpenTank('F:\Directory\Tank','R');
 
- %% User input for Block infomation
- % block number to access
+%% User input for Block infomation
+% block number to access
 block_str = 'Block-';
 Block = input('Block?','s');
 if isempty(Block)
@@ -21,14 +29,14 @@ Block = strcat(block_str, Block);
 
 Trials = 200;
  
- b=TT.SelectBlock(Block);
- z=TT.CreateEpocIndexing;
- filt =TT.SetFilterWithDescEx('SPAT=1000');
+b=TT.SelectBlock(Block);
+z=TT.CreateEpocIndexing;
+filt =TT.SetFilterWithDescEx('SPAT=1000');
 
      
- %% Pull Individual Channel data
+%% Pull Individual Channel data
 
- %Channel 1 = Channel 1
+%Channel 1 = Channel 1
  a=TT.ReadEventsV(Trials,'VEPx',1,0,0,0,'ALL');
  VEPdata1=TT.ParseEvV(0,a);
  sampleRateHz=TT.ParseEvInfoV(0,1,9);
@@ -36,7 +44,7 @@ Trials = 200;
  TimeAxis=(0:(npts(1)-1))/sampleRateHz;
  AverageVEP1=mean(VEPdata1');
 
- % Channel 2 = Channel 2
+%Channel 2 = Channel 2
  a=TT.ReadEventsV(Trials,'VEPx',2,0,0,0,'ALL');
  VEPdata2=TT.ParseEvV(0,a);
  sampleRateHz=TT.ParseEvInfoV(0,1,9);
@@ -44,7 +52,7 @@ Trials = 200;
  TimeAxis=(0:(npts(1)-1))/sampleRateHz;
  AverageVEP2=mean(VEPdata2');
 
- % Channel 3 = Channel 3
+% Channel 3 = Channel 3
  a=TT.ReadEventsV(Trials,'VEPx',3,0,0,0,'ALL');
   VEPdata3=TT.ParseEvV(0,a);
  sampleRateHz=TT.ParseEvInfoV(0,1,9);
@@ -161,12 +169,6 @@ TT.CloseTank;
 TT.ReleaseServer;
 
 %% Organize Data
-
-% Create cell-array of raw data
-Block= {VEPdata1; VEPdata2; VEPdata3; VEPdata4; VEPdata5; VEPdata6;...
-    VEPdata7; VEPdata8; VEPdata9; VEPdata10; VEPdata11; VEPdata12; VEPdata13;...
-    VEPdata14; VEPdata15; VEPdata16};
-
 % create cell-array of Averages
 BlockAvg= {AverageVEP1; AverageVEP2; AverageVEP3; AverageVEP4; AverageVEP5; AverageVEP6;...
     AverageVEP7; AverageVEP8; AverageVEP9; AverageVEP10; AverageVEP11; AverageVEP12; AverageVEP13;...
@@ -199,9 +201,9 @@ AmpMin1 = abs(min(First,[],2));
 AmpMax2 =(max(Last,[],2));
 AmpMin2 = abs(min(Last,[],2));
 
-% Find Amplitudes
-Amp1 = (AmpMax1+AmpMin1)*1000000;
-Amp2 = (AmpMax2+AmpMin2)*1000000;
+% Find Amplitudes and conver to microvolts
+Amp1 = (AmpMax1+AmpMin1)*1000000; #amplitude of first VEP reversal
+Amp2 = (AmpMax2+AmpMin2)*1000000; #amplitude of second VEP reversal
 
 Channels=[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16];
 
