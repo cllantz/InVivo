@@ -1,6 +1,8 @@
+% This Script sorts units by sort code 1, and electrode number
 
 Y= zeros(100,33);
 
+%%Find amplitude of each unit and remove sorted units that are impossibly large or impossibly small.
 allmax=max(tabletest(:,4:end),[],2);
 allmin=min(tabletest(:,4:end),[],2);
 amp=abs(allmax-allmin);
@@ -13,6 +15,7 @@ tabletest=tabletest.*repmat(logmax,1,33);
 tabletest=tabletest.*repmat(logmin,1,33);
 tabletest=tabletest.*repmat(logamp,1,33);
 
+%% Sort by electrode number (1 -16)
 A = arrayfun(@(x) tabletest(tabletest(:,1) == x, :), unique(tabletest(:,1)), 'uniformoutput', false);
 
 first=A{1,1}(1,1);
