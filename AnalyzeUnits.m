@@ -10,9 +10,11 @@
 %   4. Then we check to make sure we have the correct number of trials, for this study it is 200, and sets the time stamps for start/end
 %   5. SUOrg - Organizes spikes into experimental trials, numbers trials for easier raster plotting
 %   6. SpikeNums - Removes movement artifacts, where units occur on all channels at the same time
+%
 % Useful output are:
 %   1. AllSpike - Total number of spikes for each sort code by electrode number
 %   2. AvgUnit1 (or2) - Average waveform for each unit by electrode number and sort number
+%
 
 clear all
 close all
@@ -34,25 +36,26 @@ sortnumbs={'sort=1','sort=2'};
 sortcode={'FixVar'};
 b=TT.SelectBlock(Block);
 z=TT.CreateEpocIndexing;
- 
+
+%% Pull raw data, must have already specified directory, block, sort codes, and sort numbers to run
 run PullSpikes
 
-if size(SUdata1,2)>2
-run Sort1
-elseif size(SUdata1,1)<2
-    for i=1:16
-        A(i,1)=Y;
-    end
+Y= zeros(100,33); #place holder when a sort number is empty
+
+if size(SUdata1,2) < 2
+	for i=1:16
+		A{i,1}=Y;
+	end
+else
+	run Sort1
 end
 
-Y= zeros(100,33);
-
-if size(SUdata2,2) > 2
-run Sort2
-elseif size(SUdata2,2) < 2
-    for i=1:16
-        B{i,1}=Y;
-    end
+if size(SUdata2,2) < 2
+	for i=1:16
+		B{i,1}=Y;
+	end
+else
+	run Sort2
 end
 
 TT.CloseTank;
@@ -60,13 +63,17 @@ TT.ReleaseServer;
 
 Flash=MyEpocs(2,:)';
 
+disp("Dimensions of Flash: ")
 size(Flash)
 
-if size(Flash,1)==200
-    Flash(:,2)=Flash(:,1)-0.1003;
-    Flash(:,3)=Flash(:,2)+1.0007;
+if size(Flash,1)==200 #all of these are written for 200 trials
+    Flash(:,2)=Flash(:,1)-0.1003; #this value is designated by the time pre-record for each stimulation
+    Flash(:,3)=Flash(:,2)+1.0007; #this value is designated by the time post-record for each stimulation
     run SUorg
     run SpikeNums
+else
+    disp("Trials does not = 200")
+    return
 end
 
 clearvars -except A B C D nSpike1 nSpike2 nSpike3 nSpike4 Flash Spike1 Spike2 ...
