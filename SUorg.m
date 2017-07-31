@@ -1,5 +1,7 @@
+% This script assigns each spike to trial number within the 200 trials based on the time it occured. 
+
 %%Sort 1
-%%calculate trial number
+%%calculate trial number for sort 1 (A)
 for k=1:16
   for i=1:size(Flash,1)
     Flash(i,2)<= A{k}(:,3);
@@ -13,7 +15,7 @@ end
 clear k
 clear i
 
-%%remove spikes from before visstim start
+%%remove spikes from before visstim start for sort 1 (A)
 for k=1:16
     if allnum{1,k}(1,1)==0
     [x, y]=find(allnum{1,k}(:,:)==0);
@@ -30,7 +32,7 @@ end
 
 clear k
 
-
+%% remove time = 0 spikes
 for k=1:16
 
     cellval=allnum{1,k};
@@ -43,6 +45,7 @@ end
 
 clear k
 
+%% Combine all info
 for k = 1:16
     A{k}=[allnum{k} trialtimz{k} A{k}];
 end
@@ -52,6 +55,9 @@ clear i
 clear j
 clear allnum
 clear trialtimz
+
+%%Sort 2
+%%calculate trial number for sort 2 (B)
 
 for k=1:16
   for i=1:size(Flash)
@@ -82,6 +88,9 @@ for k=1:16
 end
 
 clear k
+
+
+%%remove spikes from before visstim start for sort 2 (B)
 for k=1:16
 
     cellval=allnum{1,k};
@@ -95,6 +104,7 @@ end
 
 clear k
 
+%% remove time = 0 spikes
 for k = 1:16
     B{k}=[allnum{k} trialtimz{k} B{k}];
 end
