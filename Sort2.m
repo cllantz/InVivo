@@ -1,3 +1,5 @@
+% Same script as Sort1, but for sort number 2 (B)
+
 Y= zeros(100,33);
 
 clear allmax max min amp
