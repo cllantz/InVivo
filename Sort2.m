@@ -8,15 +8,11 @@ amp=abs(allmax-allmin);
 logamp2 = amp>0.4e-04;
 logmax2 = allmax<3.50e-04;
 logmin2 = allmin>-3.50e-04;
-% logamp2 = amp>0.4e-04;
-% logampb2 = amp<2.4e-04;
-% logmax2 = allmax<1.0e-04;
-% logmin2 = allmin>-1.5e-04;
+
 
 tabletest2=tabletest2.*repmat(logmax2,1,33);
 tabletest2=tabletest2.*repmat(logmin2,1,33);
 tabletest2=tabletest2.*repmat(logamp2,1,33);
-% tabletest2=tabletest2.*repmat(logampb2,1,33);
 
 B = arrayfun(@(x) tabletest2(tabletest2(:,1) == x, :), unique(tabletest2(:,1)), 'uniformoutput', false);
 
